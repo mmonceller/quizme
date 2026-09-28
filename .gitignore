@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-pages
+*.zip
+data
+uploads
+.env
+.dev.vars
+.wrangler
+*.log

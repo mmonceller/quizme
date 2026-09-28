@@ -1,0 +1,42 @@
+{
+  "name": "quizgame",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run db:migrate:local && vite",
+    "build": "vite build",
+    "build:pages": "vite build --mode pages && node -e \"require('fs').copyFileSync('dist-pages/index.html','dist-pages/404.html')\"",
+    "preview": "npm run build && vite preview",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p server",
+    "db:migrate:local": "wrangler d1 migrations apply quizgame --local --config wrangler.jsonc --persist-to .wrangler/state",
+    "db:migrate:remote": "wrangler d1 migrations apply quizgame --remote --config wrangler.jsonc",
+    "deploy": "npm run db:migrate:remote && npm run build && wrangler deploy --config dist/quizgame/wrangler.json"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "hono": "^4.13.10",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router": "^8.4.0",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.61.0",
+    "@cloudflare/workers-types": "^5.20260928.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "wrangler": "^4.142.0"
+  },
+  "allowScripts": {
+    "workerd@1.20260926.1": true,
+    "esbuild@0.28.1": true
+  }
+}

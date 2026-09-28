@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+
+  --color-brand-50: #f3f5fb;
+  --color-brand-100: #e4e9f6;
+  --color-brand-200: #c9d3ec;
+  --color-brand-300: #a2b3dc;
+  --color-brand-400: #7189c6;
+  --color-brand-500: #4d68b0;
+  --color-brand-600: #3a5196;
+  --color-brand-700: #2f427b;
+  --color-brand-800: #293966;
+  --color-brand-900: #222e50;
+
+  --animate-pop: pop 0.18s ease-out;
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-slide-up: slide-up 0.22s ease-out;
+  --animate-urgent: urgent 0.6s ease-in-out infinite;
+
+  @keyframes pop {
+    0% { transform: scale(0.97); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes urgent {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+svg.lucide {
+  stroke-width: 1.75;
+}
+
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
