@@ -239,6 +239,8 @@ export interface WordSearchQuestion extends BaseQuestion {
   type: 'word_search';
   /** As entered by the author; letters are normalized (A–Z) for the grid. */
   words: string[];
+  /** Points per word, aligned with `words` (missing entries count as 1). The question's points are their sum. */
+  wordPoints?: number[];
   options: WordSearchOptions;
   seed: number;
   /** One string of letters per row. */
@@ -273,6 +275,9 @@ export interface MazeOptions {
 
 export type Cell = [row: number, col: number];
 
+/** What marks the maze start or finish: the default dot, a built-in picture, or an uploaded image. */
+export type MazeMarker = { type: 'dot' } | { type: 'preset'; id: string } | { type: 'image'; url: string };
+
 export interface MazeQuestion extends BaseQuestion {
   type: 'maze';
   options: MazeOptions;
@@ -281,6 +286,8 @@ export interface MazeQuestion extends BaseQuestion {
   cells: string[];
   start: Cell;
   end: Cell;
+  startMarker?: MazeMarker;
+  endMarker?: MazeMarker;
 }
 
 export type Question =

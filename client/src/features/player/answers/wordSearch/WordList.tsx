@@ -9,6 +9,8 @@ export interface WordListItem {
   /** Highlight color once found or revealed. */
   color: string | null;
   missed?: boolean;
+  /** Shown as a badge when words are worth different amounts. */
+  points?: number;
 }
 
 export function WordList({
@@ -47,6 +49,11 @@ export function WordList({
               }}
             >
               {masked ? '•'.repeat(normalizeWord(item.word).length || item.word.length) : item.word}
+              {item.points !== undefined && (
+                <span className="ml-1.5 inline-block rounded-md px-1.5 align-middle text-[0.75em] no-underline opacity-80" style={{ background: `${theme.accent}22` }}>
+                  {item.points} {item.points === 1 ? 'pt' : 'pts'}
+                </span>
+              )}
             </Tag>
           </li>
         );

@@ -1,8 +1,9 @@
 import { DEFAULT_MAZE_OPTIONS, DEFAULT_WORD_SEARCH_OPTIONS } from '../../../shared/puzzles/defaults.ts';
 import { isActive, isCell, parseMaze } from '../../../shared/puzzles/maze/index.ts';
-import { WORD_SEARCH_LIMITS, clampGridSize } from '../../../shared/puzzles/wordSearch/index.ts';
+import { WORD_SEARCH_LIMITS, clampGridSize, wordPointList, wordSearchTotal } from '../../../shared/puzzles/wordSearch/index.ts';
 import type {
   MazeAnchor,
+  MazeMarker,
   MazeOptions,
   MazeQuestion,
   MazeShape,
@@ -72,8 +73,18 @@ export function cleanWordSearch(q: WordSearchQuestion, index: number): WordSearc
     )
     .map((p) => ({ word: p.word.slice(0, 60), row: p.row, col: p.col, dr: p.dr, dc: p.dc }));
 
+  const wordPoints = wordPointList({ words, wordPoints: Array.isArray(q.wordPoints) ? q.wordPoints : undefined });
   const { wordHashes: _hashes, ...rest } = q;
-  return { ...rest, options, words, grid, placements, seed: seedOf(q.seed) };
+  return {
+    ...rest,
+    options,
+    words,
+    wordPoints,
+    points: wordSearchTotal({ words, wordPoints }),
+    grid,
+    placements,
+    seed: seedOf(q.seed),
+  };
 }
 
 export function cleanMaze(q: MazeQuestion, index: number): MazeQuestion {
@@ -96,5 +107,23 @@ export function cleanMaze(q: MazeQuestion, index: number): MazeQuestion {
   if (!isCell(q.start) || !isCell(q.end) || !isActive(grid, q.start) || !isActive(grid, q.end)) {
     throw badRequest(`Question ${index + 1}: the maze start or end is invalid`);
   }
-  return { ...q, options, cells, start: [q.start[0], q.start[1]], end: [q.end[0], q.end[1]], seed: seedOf(q.seed) };
+  return {
+    ...q,
+    options,
+    cells,
+    start: [q.start[0], q.start[1]],
+    end: [q.end[0], q.end[1]],
+    startMarker: cleanMarker(q.startMarker),
+    endMarker: cleanMarker(q.endMarker),
+    seed: seedOf(q.seed),
+  };
+}
+
+function cleanMarker(value: unknown): MazeMarker {
+  const raw = asObject(value);
+  if (raw.type === 'preset' && typeof raw.id === 'string' && /^[a-z0-9-]{1,40}$/.test(raw.id)) return { type: 'preset', id: raw.id };
+  if (raw.type === 'image' && typeof raw.url === 'string' && raw.url.length <= 500 && /^(\/uploads\/|https:\/\/)/.test(raw.url)) {
+    return { type: 'image', url: raw.url };
+  }
+  return { type: 'dot' };
 }

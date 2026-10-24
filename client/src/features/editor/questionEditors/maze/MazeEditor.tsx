@@ -2,12 +2,13 @@ import { useMemo, useState } from 'react';
 import { Eye, EyeOff, Shuffle } from 'lucide-react';
 import { generateMaze, solveMaze } from '@shared/puzzles/maze';
 import { randomSeed } from '@shared/puzzles/random';
-import type { Cell, MazeOptions, MazeQuestion, MazeSize } from '@shared/types';
+import type { Cell, MazeMarker, MazeOptions, MazeQuestion, MazeSize } from '@shared/types';
 import { Button, Segmented } from '@/components/ui';
 import { MazeBoard } from '@/components/puzzles/maze';
 import { SettingRow } from '../../components/SettingRow';
 import type { TypeEditorProps } from '../types';
 import { AnchorPicker } from './AnchorPicker';
+import { MarkerPicker } from './MarkerPicker';
 import { ShapePicker } from './ShapePicker';
 
 const SIZES: { value: MazeSize; label: string }[] = [
@@ -19,6 +20,7 @@ const SIZES: { value: MazeSize; label: string }[] = [
 
 const START_COLOR = '#16a34a';
 const END_COLOR = '#dc2626';
+const DOT: MazeMarker = { type: 'dot' };
 
 interface MazeInput {
   options?: Partial<MazeOptions>;
@@ -71,6 +73,12 @@ export function MazeEditor({ q, onChange }: TypeEditorProps<MazeQuestion>) {
             onPick={() => setPicking((p) => (p === 'end' ? null : 'end'))}
           />
         </SettingRow>
+        <SettingRow label="Pictures" hint="Shown at the start and finish">
+          <div className="flex flex-wrap gap-2">
+            <MarkerPicker label="Start" value={q.startMarker ?? DOT} ring={START_COLOR} defaultGroup="people" onChange={(startMarker) => onChange({ startMarker })} />
+            <MarkerPicker label="Finish" value={q.endMarker ?? DOT} ring={END_COLOR} defaultGroup="things" onChange={(endMarker) => onChange({ endMarker })} />
+          </div>
+        </SettingRow>
       </div>
 
       <div className="space-y-3">
@@ -92,6 +100,8 @@ export function MazeEditor({ q, onChange }: TypeEditorProps<MazeQuestion>) {
             cells={q.cells}
             start={q.start}
             end={q.end}
+            startMarker={q.startMarker}
+            endMarker={q.endMarker}
             solution={solution}
             onCellClick={picking ? pickCell : undefined}
             colors={{ background: '#f8fafc', wall: '#334155', path: '#4f46e5' }}

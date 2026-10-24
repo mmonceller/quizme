@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { foundWords, isSegment, matchSegment, normalizeWord, placementSegment, type Segment } from '@shared/puzzles/wordSearch';
+import { foundWords, isSegment, matchSegment, normalizeWord, placementSegment, wordPointList, type Segment } from '@shared/puzzles/wordSearch';
 import type { WordSearchQuestion } from '@shared/types';
 import { HIGHLIGHT_COLORS, WordSearchBoard } from '@/components/puzzles/wordSearch';
 import { CORRECT, type AnswerViewProps } from '../types';
@@ -53,10 +53,13 @@ export function WordSearchView({ q, solution, answer, onChange, interactive, loc
     ? [...placementOf].filter(([i]) => !found.has(i)).map(([, seg]) => ({ seg, color: CORRECT }))
     : [];
 
+  const points = wordPointList({ words, wordPoints: (solution ?? q).wordPoints });
+  const varied = points.some((p) => p !== points[0]);
   const items: WordListItem[] = words.map((word, i) => ({
     word,
     color: found.has(i) || (canReveal && shown.has(i)) ? colorOf(i) : null,
     missed: !!solution && interactive && !found.has(i),
+    points: varied ? points[i] : undefined,
   }));
   const showList = q.options.showWordList || !!solution;
 

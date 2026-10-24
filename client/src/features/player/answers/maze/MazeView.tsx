@@ -18,13 +18,15 @@ export function MazeView({ q, solution, answer, onChange, interactive, locked, t
     <div className="mx-auto w-full max-w-3xl space-y-3">
       {canDraw && (
         <p className="text-center text-sm font-semibold opacity-75">
-          Draw a path from the green dot to the red finish — drag through the corridors or use the arrow keys
+          Draw a path from the green start to the red finish — drag through the corridors or use the arrow keys
         </p>
       )}
       <MazeBoard
         cells={q.cells}
         start={q.start}
         end={q.end}
+        startMarker={q.startMarker}
+        endMarker={q.endMarker}
         path={path}
         solution={solution && !solved ? route : null}
         onPathChange={canDraw ? onChange : undefined}
@@ -36,7 +38,7 @@ export function MazeView({ q, solution, answer, onChange, interactive, locked, t
             Finish reached!
           </span>
         ) : (
-          <span className="opacity-75">{path.length > 1 ? `${path.length - 1} steps so far` : 'Start at the green dot'}</span>
+          <span className="opacity-75">{path.length > 1 ? `${path.length - 1} steps so far` : 'Start at the green marker'}</span>
         )}
         {canDraw && path.length > 1 && (
           <>

@@ -1,14 +1,17 @@
 import { useMemo, useRef, type KeyboardEvent, type PointerEvent } from 'react';
-import type { Cell } from '@shared/types';
+import type { Cell, MazeMarker } from '@shared/types';
 import { E, N, S, W, parseMaze, sameCell } from '@shared/puzzles/maze';
 import { cn } from '@/lib/utils';
 import { svgPoint } from '../svgPoint';
+import { MarkerArt } from './markers';
 import { extendPath, stepPath } from './pathing';
 
 export interface MazeBoardProps {
   cells: string[];
   start: Cell;
   end: Cell;
+  startMarker?: MazeMarker;
+  endMarker?: MazeMarker;
   path?: Cell[];
   solution?: Cell[] | null;
   /** Lets the user draw a path with pointer or arrow keys. */
@@ -21,6 +24,16 @@ export interface MazeBoardProps {
 
 const START_COLOR = '#16a34a';
 const END_COLOR = '#dc2626';
+const DOT: MazeMarker = { type: 'dot' };
+/** Picture markers are a little larger than a cell so faces stay recognizable. */
+const MARKER_SIZE = 1.35;
+
+const markerBox = ([r, c]: Cell) => ({
+  x: c + 0.5 - MARKER_SIZE / 2,
+  y: r + 0.5 - MARKER_SIZE / 2,
+  width: MARKER_SIZE,
+  height: MARKER_SIZE,
+});
 
 function wallPath(open: number[][]): string {
   const d: string[] = [];
@@ -38,7 +51,19 @@ function wallPath(open: number[][]): string {
 
 const points = (path: Cell[]) => path.map(([r, c]) => `${c + 0.5},${r + 0.5}`).join(' ');
 
-export function MazeBoard({ cells, start, end, path, solution, onPathChange, onCellClick, colors, className }: MazeBoardProps) {
+export function MazeBoard({
+  cells,
+  start,
+  end,
+  startMarker = DOT,
+  endMarker = DOT,
+  path,
+  solution,
+  onPathChange,
+  onCellClick,
+  colors,
+  className,
+}: MazeBoardProps) {
   const maze = useMemo(() => parseMaze(cells), [cells]);
   const walls = useMemo(() => wallPath(maze.open), [maze]);
   const floor = useMemo(
@@ -92,7 +117,10 @@ export function MazeBoard({ cells, start, end, path, solution, onPathChange, onC
     },
   };
 
-  const pad = 0.4;
+  const head = current[current.length - 1];
+  const startPicture = startMarker.type !== 'dot';
+  const endPicture = endMarker.type !== 'dot';
+  const pad = startPicture || endPicture ? MARKER_SIZE / 2 : 0.4;
   return (
     <svg
       viewBox={`${-pad} ${-pad} ${maze.cols + pad * 2} ${maze.rows + pad * 2}`}
@@ -115,13 +143,24 @@ export function MazeBoard({ cells, start, end, path, solution, onPathChange, onC
         <polyline points={points(current)} fill="none" stroke={colors.path} strokeOpacity={0.85} strokeWidth={0.36} strokeLinecap="round" strokeLinejoin="round" />
       )}
       <path d={walls} fill="none" stroke={colors.wall} strokeWidth={0.12} strokeLinecap="round" />
-      <circle cx={start[1] + 0.5} cy={start[0] + 0.5} r={0.32} fill={START_COLOR} />
-      <g transform={`translate(${end[1] + 0.5} ${end[0] + 0.5})`}>
-        <circle r={0.34} fill={END_COLOR} />
-        <circle r={0.14} fill="#fff" />
-      </g>
-      {onPathChange && current.length > 0 && (
-        <circle cx={current[current.length - 1][1] + 0.5} cy={current[current.length - 1][0] + 0.5} r={0.2} fill={colors.path} stroke="#fff" strokeWidth={0.06} />
+      {endPicture ? (
+        <MarkerArt marker={endMarker} ring={END_COLOR} {...markerBox(end)} />
+      ) : (
+        <g transform={`translate(${end[1] + 0.5} ${end[0] + 0.5})`}>
+          <circle r={0.34} fill={END_COLOR} />
+          <circle r={0.14} fill="#fff" />
+        </g>
+      )}
+      {startPicture ? (
+        <>
+          {current.length > 1 && <circle cx={start[1] + 0.5} cy={start[0] + 0.5} r={0.22} fill={START_COLOR} />}
+          <MarkerArt marker={startMarker} ring={START_COLOR} {...markerBox(head)} />
+        </>
+      ) : (
+        <>
+          <circle cx={start[1] + 0.5} cy={start[0] + 0.5} r={0.32} fill={START_COLOR} />
+          {onPathChange && <circle cx={head[1] + 0.5} cy={head[0] + 0.5} r={0.2} fill={colors.path} stroke="#fff" strokeWidth={0.06} />}
+        </>
       )}
     </svg>
   );

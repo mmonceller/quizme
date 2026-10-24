@@ -17,6 +17,7 @@ export function EditableList<T>({
   min = 1,
   max = Infinity,
   prefix,
+  suffix,
 }: {
   items: T[];
   onChange: (items: T[]) => void;
@@ -30,6 +31,8 @@ export function EditableList<T>({
   min?: number;
   max?: number;
   prefix?: (index: number) => ReactNode;
+  /** Extra control after the text input (e.g. points). */
+  suffix?: (item: T, index: number) => ReactNode;
 }) {
   return (
     <div className="space-y-2">
@@ -42,6 +45,7 @@ export function EditableList<T>({
             onChange={(e) => onChange(items.map((it, idx) => (idx === i ? setText(it, e.target.value) : it)))}
             placeholder={placeholder(i)}
           />
+          {suffix?.(item, i)}
           {reorderable && (
             <div className="flex shrink-0">
               <button type="button" onClick={() => onChange(moveItem(items, i, i - 1))} disabled={i === 0} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30" aria-label="Move up">

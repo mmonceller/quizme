@@ -33,7 +33,8 @@ export function createQuestion(type: QuestionType): Question {
       const options = { ...DEFAULT_WORD_SEARCH_OPTIONS, directions: [...DEFAULT_WORD_SEARCH_OPTIONS.directions] };
       const seed = randomSeed();
       const { grid, placements } = generateWordSearch(words, options, seed);
-      return { ...base(type, 'Find all the hidden words.'), timerSeconds: 180, words, options, seed, grid, placements };
+      const wordPoints = words.map(() => 1);
+      return { ...base(type, 'Find all the hidden words.'), points: 0, timerSeconds: 180, words, wordPoints, options, seed, grid, placements };
     }
     case 'maze': {
       const options = { ...DEFAULT_MAZE_OPTIONS };

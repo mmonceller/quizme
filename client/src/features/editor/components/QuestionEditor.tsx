@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, Copy, Paintbrush, Timer as TimerIcon, Trash2 } from 'lucide-react';
+import { wordSearchTotal } from '@shared/puzzles/wordSearch';
 import type { Question, QuizSettings } from '@shared/types';
 import { Field, Input, Select, Textarea, Toggle } from '@/components/ui';
 import { cn } from '@/lib/utils';
@@ -102,9 +103,15 @@ function QuestionOptions({ q, settings, onChange }: { q: Question; settings: Qui
     <>
       <Collapsible icon={<TimerIcon className="h-4 w-4" />} title="Points, timer & answer reveal" summary={`${q.points} pt · ${timerSummary} · Reveal: ${revealSummary}`}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Points">
-            <Input type="number" min={0} max={100} step={0.5} value={q.points} onChange={(e) => onChange({ points: Math.max(0, Number(e.target.value) || 0) })} />
-          </Field>
+          {q.type === 'word_search' ? (
+            <Field label="Points" hint="Sum of the word points set in the Answer section">
+              <Input type="number" value={wordSearchTotal(q)} disabled readOnly />
+            </Field>
+          ) : (
+            <Field label="Points">
+              <Input type="number" min={0} max={100} step={0.5} value={q.points} onChange={(e) => onChange({ points: Math.max(0, Number(e.target.value) || 0) })} />
+            </Field>
+          )}
           <Field label="Show correct answer after timer" hint="Override for harder or trickier questions">
             <Select value={q.revealAnswer} onChange={(e) => onChange({ revealAnswer: e.target.value as Question['revealAnswer'] })}>
               <option value="inherit">Use quiz setting ({settings.revealAnswers ? 'show' : 'hide'})</option>

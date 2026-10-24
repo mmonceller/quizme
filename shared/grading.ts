@@ -1,6 +1,6 @@
 import { parseBlanks } from './blanks.ts';
 import { isSolved } from './puzzles/maze/index.ts';
-import { WORD_SEARCH_LIMITS, foundWords, normalizeWord } from './puzzles/wordSearch/index.ts';
+import { foundWords, normalizeWord, wordPointsByWord } from './puzzles/wordSearch/index.ts';
 import type { Answer, AnswerMap, GradeResult, Question } from './types.ts';
 
 const strings = (answer: Answer): string[] =>
@@ -79,9 +79,11 @@ function fraction(q: Question, answer: Answer): number {
       return hits / q.items.length;
     }
     case 'word_search': {
-      const words = new Set(q.words.map(normalizeWord).filter((w) => w.length >= WORD_SEARCH_LIMITS.minWordLength));
+      const points = wordPointsByWord(q);
       const found = new Set([...foundWords(q, answer).keys()].map((i) => normalizeWord(q.words[i])));
-      return words.size === 0 ? 0 : found.size / words.size;
+      const total = [...points.values()].reduce((a, b) => a + b, 0);
+      if (total === 0) return points.size && found.size === points.size ? 1 : 0;
+      return [...found].reduce((sum, w) => sum + (points.get(w) ?? 0), 0) / total;
     }
     case 'maze':
       return isSolved(q, answer) ? 1 : 0;
