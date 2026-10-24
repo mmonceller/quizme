@@ -1,4 +1,5 @@
 import { hideBlankAnswers } from '../../../shared/blanks.ts';
+import { normalizeWord, wordHash } from '../../../shared/puzzles/wordSearch/index.ts';
 import type { Question } from '../../../shared/types.ts';
 
 function shuffle<T>(items: T[]): T[] {
@@ -33,5 +34,16 @@ export function stripAnswers(q: Question): Question {
       return { ...q, answers: q.answers.map(() => '') };
     case 'sequencing':
       return { ...q, items: shuffle(q.items) };
+    case 'word_search':
+      return q.options.showWordList
+        ? { ...q, placements: [] }
+        : {
+            ...q,
+            placements: [],
+            words: q.words.map((w) => '•'.repeat(normalizeWord(w).length)),
+            wordHashes: q.words.map(wordHash),
+          };
+    case 'maze':
+      return q;
   }
 }

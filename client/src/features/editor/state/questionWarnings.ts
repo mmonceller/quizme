@@ -1,5 +1,7 @@
 import type { Question } from '@shared/types';
 import { countBlanks } from '@shared/blanks';
+import { WORD_SEARCH_LIMITS, normalizeWord } from '@shared/puzzles/wordSearch';
+import { unplacedWords } from '../questionEditors/wordSearch/unplacedWords';
 
 /** Returns a friendly hint when a question isn't ready to be played yet. */
 export function questionWarning(q: Question): string | null {
@@ -22,6 +24,12 @@ export function questionWarning(q: Question): string | null {
     case 'sequencing':
       if (q.items.length < 2) return 'Add at least two items';
       return q.items.every((i) => i.text.trim()) ? null : 'Fill in every item';
+    case 'word_search': {
+      const words = q.words.map(normalizeWord).filter((w) => w.length >= WORD_SEARCH_LIMITS.minWordLength);
+      if (words.length === 0) return 'Add at least one word (2+ letters)';
+      if (new Set(words).size < words.length) return 'Remove duplicate words';
+      return unplacedWords(q).length ? "Some words don't fit in the grid" : null;
+    }
     default:
       return null;
   }

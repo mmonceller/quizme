@@ -2,13 +2,13 @@ import { Check } from 'lucide-react';
 import type { EnumerationQuestion } from '@shared/types';
 import { normalize } from '@shared/grading';
 import { AnswerInput } from './AnswerInput';
-import { SOLUTION_STYLE, type AnswerViewProps } from './types';
+import { SOLUTION_STYLE, stringList, type AnswerViewProps } from './types';
 
 const alts = (a: string) => a.split('|').map((x) => x.trim()).filter(Boolean);
 
 export function EnumerationView({ q, solution, answer, onChange, interactive, locked, theme, choiceCss }: AnswerViewProps<EnumerationQuestion>) {
   const count = q.answers.length;
-  const values = Array.isArray(answer) ? answer : [];
+  const values = stringList(answer);
   const ordered = (solution ?? q).ordered;
 
   const setValue = (i: number, v: string) => {

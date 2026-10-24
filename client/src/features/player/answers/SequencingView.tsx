@@ -2,10 +2,11 @@ import { ArrowDown, ArrowUp, Check, GripVertical, X } from 'lucide-react';
 import type { SequencingQuestion } from '@shared/types';
 import { cn, moveItem } from '@/lib/utils';
 import { useDragReorder } from './useDragReorder';
-import { CORRECT, SOLUTION_STYLE, WRONG, type AnswerViewProps } from './types';
+import { CORRECT, SOLUTION_STYLE, WRONG, stringList, type AnswerViewProps } from './types';
 
 export function SequencingView({ q, solution, answer, onChange, interactive, locked, theme, choiceCss }: AnswerViewProps<SequencingQuestion>) {
-  const order = Array.isArray(answer) && answer.length === q.items.length ? answer : q.items.map((i) => i.id);
+  const given = stringList(answer);
+  const order = given.length === q.items.length ? given : q.items.map((i) => i.id);
   const textOf = (id: string) => q.items.find((i) => i.id === id)?.text ?? solution?.items.find((i) => i.id === id)?.text ?? '';
   const showCorrectOrder = solution && !interactive;
   const rows = showCorrectOrder ? solution.items.map((i) => i.id) : order;

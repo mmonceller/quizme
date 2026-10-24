@@ -6,6 +6,8 @@ import { FillBlankEditor } from './FillBlankEditor';
 import { MatchingEditor } from './MatchingEditor';
 import { EnumerationEditor } from './EnumerationEditor';
 import { SequencingEditor } from './SequencingEditor';
+import { WordSearchEditor } from './wordSearch';
+import { MazeEditor } from './maze';
 
 export function TypeEditor({ q, onChange }: { q: Question; onChange: (patch: Partial<Question>) => void }) {
   switch (q.type) {
@@ -23,5 +25,9 @@ export function TypeEditor({ q, onChange }: { q: Question; onChange: (patch: Par
       return <EnumerationEditor q={q} onChange={onChange} />;
     case 'sequencing':
       return <SequencingEditor q={q} onChange={onChange} />;
+    case 'word_search':
+      return <WordSearchEditor q={q} onChange={onChange} />;
+    case 'maze':
+      return <MazeEditor q={q} onChange={onChange} />;
   }
 }

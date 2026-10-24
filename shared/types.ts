@@ -120,7 +120,9 @@ export type QuestionType =
   | 'fill_blank'
   | 'matching'
   | 'enumeration'
-  | 'sequencing';
+  | 'sequencing'
+  | 'word_search'
+  | 'maze';
 
 export interface BaseQuestion {
   id: string;
@@ -211,6 +213,76 @@ export interface SequencingQuestion extends BaseQuestion {
   items: SequenceItem[]; // in correct order
 }
 
+export type WordDirection = 'horizontal' | 'vertical' | 'diagonal';
+/** easy = random filler letters, medium = filler drawn from the words' letters, hard = medium + look-alike decoys */
+export type WordSearchDifficulty = 'easy' | 'medium' | 'hard';
+
+export interface WordSearchOptions {
+  /** The grid is size × size letters. */
+  size: number;
+  directions: WordDirection[];
+  /** Words may also read backwards along the allowed directions. */
+  reverse: boolean;
+  difficulty: WordSearchDifficulty;
+  showWordList: boolean;
+}
+
+export interface WordPlacement {
+  word: string;
+  row: number;
+  col: number;
+  dr: number;
+  dc: number;
+}
+
+export interface WordSearchQuestion extends BaseQuestion {
+  type: 'word_search';
+  /** As entered by the author; letters are normalized (A–Z) for the grid. */
+  words: string[];
+  options: WordSearchOptions;
+  seed: number;
+  /** One string of letters per row. */
+  grid: string[];
+  /** Where each word sits; removed from public payloads. */
+  placements: WordPlacement[];
+  /** Set on public payloads when the word list is hidden, so found words can be recognized. */
+  wordHashes?: string[];
+}
+
+export type MazeShape = 'rectangle' | 'square' | 'circle' | 'ring' | 'diamond' | 'triangle' | 'hexagon' | 'heart';
+export type MazeSize = 'sm' | 'md' | 'lg' | 'xl';
+export type MazeAnchor =
+  | 'top-left'
+  | 'top'
+  | 'top-right'
+  | 'left'
+  | 'center'
+  | 'right'
+  | 'bottom-left'
+  | 'bottom'
+  | 'bottom-right'
+  | 'random'
+  | 'custom';
+
+export interface MazeOptions {
+  shape: MazeShape;
+  size: MazeSize;
+  start: MazeAnchor;
+  end: MazeAnchor;
+}
+
+export type Cell = [row: number, col: number];
+
+export interface MazeQuestion extends BaseQuestion {
+  type: 'maze';
+  options: MazeOptions;
+  seed: number;
+  /** One string per row; each char is a hex digit of open sides (1 N, 2 E, 4 S, 8 W) or "." outside the shape. */
+  cells: string[];
+  start: Cell;
+  end: Cell;
+}
+
 export type Question =
   | MultipleChoiceQuestion
   | TrueFalseQuestion
@@ -218,12 +290,15 @@ export type Question =
   | FillBlankQuestion
   | MatchingQuestion
   | EnumerationQuestion
-  | SequencingQuestion;
+  | SequencingQuestion
+  | WordSearchQuestion
+  | MazeQuestion;
 
 /* ---------- Answers ---------- */
 
 export type Answer =
   | string[] // multiple_choice (choice ids), fill_blank (per blank), enumeration, sequencing (item ids)
+  | number[][] // word_search (found segments [r1, c1, r2, c2]), maze (path of [row, col])
   | boolean // true_false
   | string // identification
   | Record<string, string> // matching: pairId -> chosen right text

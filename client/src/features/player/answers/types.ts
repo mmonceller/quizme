@@ -15,6 +15,10 @@ export interface AnswerViewProps<Q extends Question = Question> {
   choiceCss: CSSProperties;
 }
 
+/** The answer as a list of strings (choice ids, typed values, item ids). */
+export const stringList = (answer: Answer | undefined): string[] =>
+  Array.isArray(answer) ? answer.filter((a): a is string => typeof a === 'string') : [];
+
 export const CORRECT = '#16a34a';
 export const WRONG = '#dc2626';
 /** Readable on any theme background. */

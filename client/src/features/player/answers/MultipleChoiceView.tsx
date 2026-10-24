@@ -5,7 +5,7 @@ import { mediaUrl } from '@/api/config';
 import { useDisplay } from '../theme/DisplayContext';
 import { ChoiceTile, type TileState } from './ChoiceTile';
 import { choiceMarker } from './choiceMarker';
-import type { AnswerViewProps } from './types';
+import { stringList, type AnswerViewProps } from './types';
 
 /** Column classes keyed by count; container queries keep the editor preview accurate. */
 const COLUMNS: Record<number, string> = {
@@ -16,7 +16,7 @@ const COLUMNS: Record<number, string> = {
 };
 
 export function MultipleChoiceView({ q, solution, answer, onChange, interactive, locked, theme, choiceCss }: AnswerViewProps<MultipleChoiceQuestion>) {
-  const selected = new Set(Array.isArray(answer) ? answer : []);
+  const selected = new Set(stringList(answer));
   const source = solution ?? q;
   const multi = q.multiSelect ?? source.choices.filter((c) => c.correct).length > 1;
   const correctIds = new Set(solution?.choices.filter((c) => c.correct).map((c) => c.id) ?? []);

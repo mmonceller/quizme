@@ -3,6 +3,7 @@ import { columnCount } from '@shared/choiceLayout';
 import type { ChoiceColumns, ChoiceLabelStyle, ChoiceLayout, ChoiceSize } from '@shared/types';
 import { Segmented } from '@/components/ui';
 import { ChoiceIcon, SignLetter } from '@/components/icons';
+import { SettingRow } from './SettingRow';
 
 const LABEL_OPTIONS: { value: ChoiceLabelStyle; label: ReactNode }[] = [
   { value: 'letters', label: <span className="tracking-wide">A B C</span> },
@@ -33,18 +34,6 @@ const SIZE_OPTIONS: { value: ChoiceSize; label: string }[] = [
   { value: 'xl', label: 'Extra large' },
 ];
 
-function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
-  return (
-    <div className="grid gap-2 sm:grid-cols-[132px_1fr] sm:items-center sm:gap-4">
-      <div>
-        <p className="text-[13px] font-medium text-slate-700">{label}</p>
-        {hint && <p className="text-xs text-slate-500">{hint}</p>}
-      </div>
-      <div className="min-w-0">{children}</div>
-    </div>
-  );
-}
-
 export function ChoiceLayoutControls({
   layout,
   choiceCount,
@@ -65,15 +54,15 @@ export function ChoiceLayoutControls({
 
   return (
     <div className="space-y-4 rounded-lg border border-slate-200 bg-slate-50/60 p-4">
-      <Row label="Choice labels">
+      <SettingRow label="Choice labels">
         <Segmented value={layout.labels} onChange={(labels) => onChange({ labels })} options={LABEL_OPTIONS} />
-      </Row>
-      <Row label="Choices per row" hint="On wider screens">
+      </SettingRow>
+      <SettingRow label="Choices per row" hint="On wider screens">
         <Segmented value={layout.columns} onChange={(columns) => onChange({ columns })} options={columnOptions} />
-      </Row>
-      <Row label="Choice size">
+      </SettingRow>
+      <SettingRow label="Choice size">
         <Segmented value={layout.size} onChange={(size) => onChange({ size })} options={SIZE_OPTIONS} />
-      </Row>
+      </SettingRow>
     </div>
   );
 }

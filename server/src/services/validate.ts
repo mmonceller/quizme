@@ -11,6 +11,7 @@ import type {
   QuizSettings,
 } from '../../../shared/types.ts';
 import { badRequest } from '../utils/http.ts';
+import { cleanMaze, cleanWordSearch } from './validatePuzzles.ts';
 
 const TYPES: QuestionType[] = [
   'multiple_choice',
@@ -20,6 +21,8 @@ const TYPES: QuestionType[] = [
   'matching',
   'enumeration',
   'sequencing',
+  'word_search',
+  'maze',
 ];
 
 export function requireString(value: unknown, field: string, max = 200): string {
@@ -51,7 +54,16 @@ export function validateQuestions(value: unknown): Question[] {
       prompt: typeof q.prompt === 'string' ? q.prompt : '',
       points: Number.isFinite(points) && points >= 0 ? points : 1,
     } as Question;
-    return clean.type === 'multiple_choice' ? cleanChoiceLayout(clean) : clean;
+    switch (clean.type) {
+      case 'multiple_choice':
+        return cleanChoiceLayout(clean);
+      case 'word_search':
+        return cleanWordSearch(clean, i);
+      case 'maze':
+        return cleanMaze(clean, i);
+      default:
+        return clean;
+    }
   });
 }
 

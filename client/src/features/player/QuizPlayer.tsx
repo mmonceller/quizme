@@ -324,9 +324,11 @@ export function QuizPlayer({ title, questions, settings, mode, reveal, onFinish,
 function answerGiven(q: Question, a: Answer | undefined): boolean {
   if (a === undefined || a === null) return false;
   if (q.type === 'sequencing') return true;
+  if (q.type === 'word_search') return Array.isArray(a) && a.length > 0;
+  if (q.type === 'maze') return Array.isArray(a) && a.length > 1;
   if (typeof a === 'boolean') return true;
   if (typeof a === 'string') return a.trim().length > 0;
-  if (Array.isArray(a)) return a.some((x) => x.trim?.().length > 0);
+  if (Array.isArray(a)) return a.some((x) => typeof x === 'string' && x.trim().length > 0);
   return Object.values(a).some(Boolean);
 }
 

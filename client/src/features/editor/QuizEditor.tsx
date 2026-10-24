@@ -235,7 +235,7 @@ export function QuizEditor({ quiz: initial }: { quiz: Quiz }) {
                 <EmptyState
                   icon={IconListAdd}
                   title="Add your first question"
-                  description="Mix and match seven question types. Add as many as you like; there's no fixed number."
+                  description="Mix and match nine question types, including word search and maze puzzles. Add as many as you like; there's no fixed number."
                   action={<Button onClick={() => setAdding(true)}>Add question</Button>}
                 />
               )}

@@ -3,7 +3,7 @@ import { Logo } from '@/components/layout/Logo';
 import { IconClipboard, IconClock, IconPeople, type IconComponent } from '@/components/icons';
 
 const FEATURES: { icon: IconComponent; title: string; text: string }[] = [
-  { icon: IconClipboard, title: 'Seven question types', text: 'From multiple choice to matching and sequencing.' },
+  { icon: IconClipboard, title: 'Nine question types', text: 'From multiple choice and matching to word search and maze puzzles.' },
   { icon: IconClock, title: 'Timed or self-paced', text: 'Countdowns, answer reveals, and presentation mode.' },
   { icon: IconPeople, title: 'Share and collect', text: 'Public links with scored, versioned responses.' },
 ];

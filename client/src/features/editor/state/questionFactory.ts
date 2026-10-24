@@ -1,4 +1,8 @@
 import type { BaseQuestion, Question, QuestionType } from '@shared/types';
+import { DEFAULT_MAZE_OPTIONS, DEFAULT_WORD_SEARCH_OPTIONS } from '@shared/puzzles/defaults';
+import { generateMaze } from '@shared/puzzles/maze';
+import { randomSeed } from '@shared/puzzles/random';
+import { generateWordSearch } from '@shared/puzzles/wordSearch';
 import { uid } from '@/lib/utils';
 
 function base<T extends QuestionType>(type: T, prompt = ''): BaseQuestion & { type: T } {
@@ -24,6 +28,18 @@ export function createQuestion(type: QuestionType): Question {
       return { ...base(type), answers: ['', '', ''], ordered: false, caseSensitive: false };
     case 'sequencing':
       return { ...base(type, 'Put these in the correct order.'), items: Array.from({ length: 4 }, () => ({ id: uid(), text: '' })) };
+    case 'word_search': {
+      const words = ['', '', '', ''];
+      const options = { ...DEFAULT_WORD_SEARCH_OPTIONS, directions: [...DEFAULT_WORD_SEARCH_OPTIONS.directions] };
+      const seed = randomSeed();
+      const { grid, placements } = generateWordSearch(words, options, seed);
+      return { ...base(type, 'Find all the hidden words.'), timerSeconds: 180, words, options, seed, grid, placements };
+    }
+    case 'maze': {
+      const options = { ...DEFAULT_MAZE_OPTIONS };
+      const seed = randomSeed();
+      return { ...base(type, 'Find your way from start to finish.'), timerSeconds: 120, options, seed, ...generateMaze(options, seed) };
+    }
   }
 }
 

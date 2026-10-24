@@ -3,12 +3,12 @@ import type { FillBlankQuestion, Theme } from '@shared/types';
 import { blankSizerText, isMaskedBlank, parseBlanks } from '@shared/blanks';
 import { normalize } from '@shared/grading';
 import { cn } from '@/lib/utils';
-import { CORRECT, SOLUTION_STYLE, WRONG, type AnswerViewProps } from './types';
+import { CORRECT, SOLUTION_STYLE, WRONG, stringList, type AnswerViewProps } from './types';
 
 export function FillBlankView({ q, solution, answer, onChange, interactive, locked, theme, choiceCss }: AnswerViewProps<FillBlankQuestion>) {
   const segments = parseBlanks(q.text);
   const solutionBlanks = solution ? parseBlanks(solution.text).filter((s) => s.kind === 'blank') : [];
-  const values = Array.isArray(answer) ? answer : [];
+  const values = stringList(answer);
   const blankCount = segments.filter((s) => s.kind === 'blank').length;
   const [shown, setShown] = useState<Set<number>>(() => new Set());
 

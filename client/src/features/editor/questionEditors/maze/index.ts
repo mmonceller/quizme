@@ -1,0 +1,1 @@
+export { MazeEditor } from './MazeEditor';

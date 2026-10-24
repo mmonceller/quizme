@@ -15,6 +15,7 @@ export function EditableList<T>({
   numbered,
   reorderable,
   min = 1,
+  max = Infinity,
   prefix,
 }: {
   items: T[];
@@ -27,6 +28,7 @@ export function EditableList<T>({
   numbered?: boolean;
   reorderable?: boolean;
   min?: number;
+  max?: number;
   prefix?: (index: number) => ReactNode;
 }) {
   return (
@@ -61,13 +63,15 @@ export function EditableList<T>({
           </button>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={() => onChange([...items, create()])}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-brand-700 hover:bg-brand-50"
-      >
-        <Plus className="h-4 w-4" /> {addLabel}
-      </button>
+      {items.length < max && (
+        <button
+          type="button"
+          onClick={() => onChange([...items, create()])}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-brand-700 hover:bg-brand-50"
+        >
+          <Plus className="h-4 w-4" /> {addLabel}
+        </button>
+      )}
     </div>
   );
 }

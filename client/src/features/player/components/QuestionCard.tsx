@@ -12,6 +12,8 @@ import { FillBlankView } from '../answers/FillBlankView';
 import { MatchingView } from '../answers/MatchingView';
 import { EnumerationView } from '../answers/EnumerationView';
 import { SequencingView } from '../answers/SequencingView';
+import { WordSearchView } from '../answers/wordSearch';
+import { MazeView } from '../answers/maze';
 
 export const QUESTION_TYPE_LABELS: Record<Question['type'], string> = {
   multiple_choice: 'Multiple choice',
@@ -21,6 +23,8 @@ export const QUESTION_TYPE_LABELS: Record<Question['type'], string> = {
   matching: 'Matching type',
   enumeration: 'Enumeration',
   sequencing: 'Sequencing',
+  word_search: 'Word search',
+  maze: 'Maze',
 };
 
 function AnswerArea(props: AnswerViewProps) {
@@ -40,6 +44,10 @@ function AnswerArea(props: AnswerViewProps) {
       return <EnumerationView {...props} q={q} solution={solution as typeof q | null} />;
     case 'sequencing':
       return <SequencingView {...props} q={q} solution={solution as typeof q | null} />;
+    case 'word_search':
+      return <WordSearchView {...props} q={q} solution={solution as typeof q | null} />;
+    case 'maze':
+      return <MazeView {...props} q={q} solution={solution as typeof q | null} />;
   }
 }
 
